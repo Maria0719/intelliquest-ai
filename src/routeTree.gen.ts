@@ -9,20 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as StatsRouteImport } from './routes/stats'
-import { Route as ResultRouteImport } from './routes/result'
+import { Route as ResultadoRouteImport } from './routes/resultado'
 import { Route as QuizRouteImport } from './routes/quiz'
-import { Route as CreateRouteImport } from './routes/create'
+import { Route as EstadisticasRouteImport } from './routes/estadisticas'
+import { Route as CrearRouteImport } from './routes/crear'
 import { Route as IndexRouteImport } from './routes/index'
 
-const StatsRoute = StatsRouteImport.update({
-  id: '/stats',
-  path: '/stats',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResultRoute = ResultRouteImport.update({
-  id: '/result',
-  path: '/result',
+const ResultadoRoute = ResultadoRouteImport.update({
+  id: '/resultado',
+  path: '/resultado',
   getParentRoute: () => rootRouteImport,
 } as any)
 const QuizRoute = QuizRouteImport.update({
@@ -30,9 +25,14 @@ const QuizRoute = QuizRouteImport.update({
   path: '/quiz',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CreateRoute = CreateRouteImport.update({
-  id: '/create',
-  path: '/create',
+const EstadisticasRoute = EstadisticasRouteImport.update({
+  id: '/estadisticas',
+  path: '/estadisticas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CrearRoute = CrearRouteImport.update({
+  id: '/crear',
+  path: '/crear',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -43,56 +43,49 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/create': typeof CreateRoute
+  '/crear': typeof CrearRoute
+  '/estadisticas': typeof EstadisticasRoute
   '/quiz': typeof QuizRoute
-  '/result': typeof ResultRoute
-  '/stats': typeof StatsRoute
+  '/resultado': typeof ResultadoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/create': typeof CreateRoute
+  '/crear': typeof CrearRoute
+  '/estadisticas': typeof EstadisticasRoute
   '/quiz': typeof QuizRoute
-  '/result': typeof ResultRoute
-  '/stats': typeof StatsRoute
+  '/resultado': typeof ResultadoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/create': typeof CreateRoute
+  '/crear': typeof CrearRoute
+  '/estadisticas': typeof EstadisticasRoute
   '/quiz': typeof QuizRoute
-  '/result': typeof ResultRoute
-  '/stats': typeof StatsRoute
+  '/resultado': typeof ResultadoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/create' | '/quiz' | '/result' | '/stats'
+  fullPaths: '/' | '/crear' | '/estadisticas' | '/quiz' | '/resultado'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/create' | '/quiz' | '/result' | '/stats'
-  id: '__root__' | '/' | '/create' | '/quiz' | '/result' | '/stats'
+  to: '/' | '/crear' | '/estadisticas' | '/quiz' | '/resultado'
+  id: '__root__' | '/' | '/crear' | '/estadisticas' | '/quiz' | '/resultado'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  CreateRoute: typeof CreateRoute
+  CrearRoute: typeof CrearRoute
+  EstadisticasRoute: typeof EstadisticasRoute
   QuizRoute: typeof QuizRoute
-  ResultRoute: typeof ResultRoute
-  StatsRoute: typeof StatsRoute
+  ResultadoRoute: typeof ResultadoRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/stats': {
-      id: '/stats'
-      path: '/stats'
-      fullPath: '/stats'
-      preLoaderRoute: typeof StatsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/result': {
-      id: '/result'
-      path: '/result'
-      fullPath: '/result'
-      preLoaderRoute: typeof ResultRouteImport
+    '/resultado': {
+      id: '/resultado'
+      path: '/resultado'
+      fullPath: '/resultado'
+      preLoaderRoute: typeof ResultadoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/quiz': {
@@ -102,11 +95,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof QuizRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/create': {
-      id: '/create'
-      path: '/create'
-      fullPath: '/create'
-      preLoaderRoute: typeof CreateRouteImport
+    '/estadisticas': {
+      id: '/estadisticas'
+      path: '/estadisticas'
+      fullPath: '/estadisticas'
+      preLoaderRoute: typeof EstadisticasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/crear': {
+      id: '/crear'
+      path: '/crear'
+      fullPath: '/crear'
+      preLoaderRoute: typeof CrearRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -121,10 +121,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  CreateRoute: CreateRoute,
+  CrearRoute: CrearRoute,
+  EstadisticasRoute: EstadisticasRoute,
   QuizRoute: QuizRoute,
-  ResultRoute: ResultRoute,
-  StatsRoute: StatsRoute,
+  ResultadoRoute: ResultadoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
