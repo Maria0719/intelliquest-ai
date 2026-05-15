@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation } from "@tanstack/react-router";
-import { Home, Plus, BarChart3, Brain } from "lucide-react";
+import { Home, Plus, BarChart3, Brain, MessageSquare } from "lucide-react";
 import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { obtenerHistorial, calcularEstadisticas } from "@/servicios/almacenamiento";
@@ -7,7 +7,8 @@ import { obtenerHistorial, calcularEstadisticas } from "@/servicios/almacenamien
 const elementosNav = [
   { to: "/", etiqueta: "Inicio", icon: Home },
   { to: "/crear", etiqueta: "Crear", icon: Plus },
-  { to: "/estadisticas", etiqueta: "Estadísticas", icon: BarChart3 },
+  { to: "/chat", etiqueta: "Tutor", icon: MessageSquare },
+  { to: "/estadisticas", etiqueta: "Stats", icon: BarChart3 },
 ];
 
 export function Navegacion({ children }: { children?: ReactNode }) {
@@ -35,7 +36,7 @@ export function Navegacion({ children }: { children?: ReactNode }) {
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all",
                   activo
                     ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-glow"
-                    : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
+                    : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground",
                 )}
               >
                 <Icon className="size-4" /> {etiqueta}
@@ -45,7 +46,9 @@ export function Navegacion({ children }: { children?: ReactNode }) {
         </nav>
         <div className="mt-auto rounded-xl border border-sidebar-border bg-sidebar-accent/40 p-4">
           <div className="text-xs text-sidebar-foreground/60 mb-1">Racha actual</div>
-          <div className="text-2xl font-bold text-gradient">🔥 {racha} día{racha !== 1 ? "s" : ""}</div>
+          <div className="text-2xl font-bold text-gradient">
+            🔥 {racha} día{racha !== 1 ? "s" : ""}
+          </div>
         </div>
       </aside>
 
@@ -60,13 +63,13 @@ export function Navegacion({ children }: { children?: ReactNode }) {
         <div className="text-sm font-medium text-gradient">🔥 {racha}</div>
       </header>
 
-      <main className="flex-1 min-w-0 pb-24 md:pb-8">
+      <main className="flex-1 min-w-0 pb-20 md:pb-8">
         {children ?? <Outlet />}
       </main>
 
-      {/* Navegación inferior (móvil) */}
+      {/* Navegación inferior (móvil) — 4 ítems */}
       <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-sidebar border-t border-sidebar-border">
-        <div className="grid grid-cols-3">
+        <div className="grid grid-cols-4">
           {elementosNav.map(({ to, etiqueta, icon: Icon }) => {
             const activo = to === "/" ? pathname === "/" : pathname.startsWith(to);
             return (
@@ -75,7 +78,7 @@ export function Navegacion({ children }: { children?: ReactNode }) {
                 to={to}
                 className={cn(
                   "flex flex-col items-center justify-center py-3 text-xs gap-1 transition-colors",
-                  activo ? "text-primary" : "text-sidebar-foreground/60"
+                  activo ? "text-primary" : "text-sidebar-foreground/60",
                 )}
               >
                 <Icon className="size-5" />

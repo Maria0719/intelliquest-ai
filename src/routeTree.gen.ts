@@ -13,6 +13,7 @@ import { Route as ResultadoRouteImport } from './routes/resultado'
 import { Route as QuizRouteImport } from './routes/quiz'
 import { Route as EstadisticasRouteImport } from './routes/estadisticas'
 import { Route as CrearRouteImport } from './routes/crear'
+import { Route as ChatRouteImport } from './routes/chat'
 import { Route as IndexRouteImport } from './routes/index'
 
 const ResultadoRoute = ResultadoRouteImport.update({
@@ -35,6 +36,11 @@ const CrearRoute = CrearRouteImport.update({
   path: '/crear',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ChatRoute = ChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -43,6 +49,7 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/chat': typeof ChatRoute
   '/crear': typeof CrearRoute
   '/estadisticas': typeof EstadisticasRoute
   '/quiz': typeof QuizRoute
@@ -50,6 +57,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/chat': typeof ChatRoute
   '/crear': typeof CrearRoute
   '/estadisticas': typeof EstadisticasRoute
   '/quiz': typeof QuizRoute
@@ -58,6 +66,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/chat': typeof ChatRoute
   '/crear': typeof CrearRoute
   '/estadisticas': typeof EstadisticasRoute
   '/quiz': typeof QuizRoute
@@ -65,14 +74,22 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/crear' | '/estadisticas' | '/quiz' | '/resultado'
+  fullPaths: '/' | '/chat' | '/crear' | '/estadisticas' | '/quiz' | '/resultado'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/crear' | '/estadisticas' | '/quiz' | '/resultado'
-  id: '__root__' | '/' | '/crear' | '/estadisticas' | '/quiz' | '/resultado'
+  to: '/' | '/chat' | '/crear' | '/estadisticas' | '/quiz' | '/resultado'
+  id:
+    | '__root__'
+    | '/'
+    | '/chat'
+    | '/crear'
+    | '/estadisticas'
+    | '/quiz'
+    | '/resultado'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ChatRoute: typeof ChatRoute
   CrearRoute: typeof CrearRoute
   EstadisticasRoute: typeof EstadisticasRoute
   QuizRoute: typeof QuizRoute
@@ -109,6 +126,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrearRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/chat': {
+      id: '/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof ChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -121,6 +145,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ChatRoute: ChatRoute,
   CrearRoute: CrearRoute,
   EstadisticasRoute: EstadisticasRoute,
   QuizRoute: QuizRoute,
