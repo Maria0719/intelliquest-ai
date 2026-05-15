@@ -1,19 +1,26 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Navegacion } from "@/componentes/Navegacion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Send, Brain, Loader2, Trash2, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { enviarMensajeChat } from "@/servicios/openai";
-import type { MensajeChat } from "@/servicios/openai";
+import type { MensajeChat, ContextoAprendizaje } from "@/servicios/openai";
+import { obtenerHistorial, calcularEstadisticas } from "@/servicios/almacenamiento";
 
 export const Route = createFileRoute("/chat")({ component: Chat });
 
-const SUGERENCIAS = [
+const SUGERENCIAS_GENERALES = [
   "¿Cómo funciona la fotosíntesis?",
   "Explícame la Segunda Guerra Mundial",
   "¿Qué es el aprendizaje automático?",
   "¿Cómo funcionan los agujeros negros?",
   "Explica la oferta y la demanda",
+];
+
+const SUGERENCIAS_PROGRESO = [
+  "¿Cómo va mi aprendizaje?",
+  "¿En qué temas debo mejorar?",
+  "¿Cuáles son mis puntos fuertes?",
 ];
 
 function BurbujaMensaje({ mensaje }: { mensaje: MensajeChat }) {
@@ -66,6 +73,24 @@ function Chat() {
   const finalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
+  const contextoAprendizaje = useMemo((): ContextoAprendizaje | undefined => {
+    const historialQuizzes = obtenerHistorial();
+    if (historialQuizzes.length === 0) return undefined;
+    const stats = calcularEstadisticas(historialQuizzes);
+    return {
+      totalQuizzes: stats.totalQuizzes,
+      promedioGeneral: stats.promedioGeneral,
+      racha: stats.racha,
+      temasEstudiados: stats.temasEstudiados,
+      quizzesRecientes: historialQuizzes.slice(0, 10).map((r) => ({
+        topic: r.topic,
+        difficulty: r.difficulty,
+        percentage: r.percentage,
+        date: r.date,
+      })),
+    };
+  }, []);
+
   useEffect(() => {
     finalRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [historial, cargando]);
@@ -84,7 +109,7 @@ function Chat() {
     setCargando(true);
 
     try {
-      const respuesta = await enviarMensajeChat(nuevoHistorial);
+      const respuesta = await enviarMensajeChat(nuevoHistorial, contextoAprendizaje);
       setHistorial((h) => [...h, { rol: "asistente", contenido: respuesta }]);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Error al conectar con la IA.");
@@ -118,7 +143,9 @@ function Chat() {
             </div>
             <div>
               <h1 className="font-bold text-base leading-none">Tutor IA</h1>
-              <p className="text-xs text-muted-foreground mt-0.5">Pregúntame cualquier cosa</p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {contextoAprendizaje ? "Conozco tu historial de quizzes" : "Pregúntame cualquier cosa"}
+              </p>
             </div>
           </div>
           {historial.length > 0 && (
@@ -145,7 +172,22 @@ function Chat() {
                 </p>
               </div>
               <div className="flex flex-col gap-2 w-full max-w-sm">
-                {SUGERENCIAS.map((s) => (
+                {contextoAprendizaje && (
+                  <>
+                    <p className="text-xs text-muted-foreground text-left font-medium px-1">Tu progreso</p>
+                    {SUGERENCIAS_PROGRESO.map((s) => (
+                      <button
+                        key={s}
+                        onClick={() => { setInput(s); inputRef.current?.focus(); }}
+                        className="text-sm text-left px-4 py-2.5 rounded-xl bg-primary/5 border border-primary/30 hover:border-primary/60 hover:bg-primary/10 transition"
+                      >
+                        {s}
+                      </button>
+                    ))}
+                    <p className="text-xs text-muted-foreground text-left font-medium px-1 mt-2">Explorar temas</p>
+                  </>
+                )}
+                {SUGERENCIAS_GENERALES.map((s) => (
                   <button
                     key={s}
                     onClick={() => { setInput(s); inputRef.current?.focus(); }}

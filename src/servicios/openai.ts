@@ -68,7 +68,20 @@ export interface MensajeChat {
   contenido: string;
 }
 
-const SISTEMA_CHAT = [
+export interface ContextoAprendizaje {
+  totalQuizzes: number;
+  promedioGeneral: number;
+  racha: number;
+  temasEstudiados: string[];
+  quizzesRecientes: Array<{
+    topic: string;
+    difficulty: string;
+    percentage: number;
+    date: string;
+  }>;
+}
+
+const SISTEMA_BASE = [
   "Eres AprendeIA, un tutor educativo inteligente y amigable.",
   "Tu misión es explicar cualquier tema de forma clara, didáctica y con ejemplos concretos.",
   "- Usa un tono cercano y motivador.",
@@ -79,9 +92,42 @@ const SISTEMA_CHAT = [
   "- Sé conciso pero completo.",
 ].join("\n");
 
-export async function enviarMensajeChat(historial: MensajeChat[]): Promise<string> {
+function construirSistemaChat(contexto?: ContextoAprendizaje): string {
+  if (!contexto || contexto.totalQuizzes === 0) return SISTEMA_BASE;
+
+  const recientes = contexto.quizzesRecientes
+    .map((q) => {
+      const fecha = new Date(q.date).toLocaleDateString("es-ES", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
+      return `  · ${q.topic} (${q.difficulty}) — ${q.percentage}% — ${fecha}`;
+    })
+    .join("\n");
+
+  const seccionProgreso = [
+    "",
+    "DATOS DE APRENDIZAJE DEL USUARIO:",
+    `- Quizzes completados: ${contexto.totalQuizzes}`,
+    `- Promedio general: ${contexto.promedioGeneral}%`,
+    `- Racha actual: ${contexto.racha} día${contexto.racha !== 1 ? "s" : ""}`,
+    `- Temas estudiados: ${contexto.temasEstudiados.join(", ")}`,
+    `- Últimos quizzes:\n${recientes}`,
+    "",
+    "Cuando el usuario pregunte por su progreso, desempeño o aprendizaje, usa estos datos para dar una respuesta personalizada y motivadora.",
+    "Identifica fortalezas (porcentajes altos) y áreas a reforzar (porcentajes bajos) basándote en el historial.",
+  ].join("\n");
+
+  return SISTEMA_BASE + seccionProgreso;
+}
+
+export async function enviarMensajeChat(
+  historial: MensajeChat[],
+  contexto?: ContextoAprendizaje,
+): Promise<string> {
   const mensajes = [
-    { role: "system", content: SISTEMA_CHAT },
+    { role: "system", content: construirSistemaChat(contexto) },
     ...historial.map((m) => ({
       role: m.rol === "usuario" ? ("user" as const) : ("assistant" as const),
       content: m.contenido,
