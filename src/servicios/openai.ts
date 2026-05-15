@@ -1,5 +1,7 @@
 import type { PreguntaQuiz } from "./almacenamiento";
 
+const API_KEY = "COLOCA_TU_API_KEY_AQUI";
+
 function construirPrompt(n: number, tema: string, dificultad: string): string {
   return `Genera ${n} preguntas de opción múltiple sobre: "${tema}". Dificultad: ${dificultad}.
 Responde SOLO con un JSON array sin texto extra ni backticks:
@@ -8,7 +10,6 @@ donde "answer" es el índice (0-3) de la opción correcta.`;
 }
 
 export async function generarQuiz(
-  apiKey: string,
   tema: string,
   cantidad: number,
   dificultad: string
@@ -17,7 +18,7 @@ export async function generarQuiz(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
+      Authorization: `Bearer ${API_KEY}`,
     },
     body: JSON.stringify({
       model: "gpt-4o-mini",
@@ -29,7 +30,7 @@ export async function generarQuiz(
   if (!respuesta.ok) {
     const err = await respuesta.json().catch(() => ({}));
     const msg = (err as { error?: { message?: string } }).error?.message;
-    if (respuesta.status === 401) throw new Error("API Key inválida. Verifica que sea correcta.");
+    if (respuesta.status === 401) throw new Error("API Key inválida. Verifica la key en el código.");
     if (respuesta.status === 429) throw new Error("Límite de solicitudes alcanzado. Espera un momento.");
     throw new Error(msg ?? `Error ${respuesta.status} al contactar OpenAI.`);
   }
@@ -55,5 +56,4 @@ export async function generarQuiz(
   return preguntas;
 }
 
-// Alias en inglés para compatibilidad
 export const generateQuiz = generarQuiz;
