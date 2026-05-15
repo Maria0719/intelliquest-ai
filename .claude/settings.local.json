@@ -7,7 +7,10 @@
       "Bash(npx tsc *)",
       "Bash(node node_modules/.bin/tsc --noEmit)",
       "Bash(vite\" 2>&1)",
-      "PowerShell(Get-ChildItem \"c:\\\\Users\\\\maria\\\\Desktop\\\\quiz\\\\intelliquest-ai\\\\node_modules\\\\.bin\\\\\" | Where-Object { $_.Name -match \"tsc|vite\" } | Select-Object Name)"
+      "PowerShell(Get-ChildItem \"c:\\\\Users\\\\maria\\\\Desktop\\\\quiz\\\\intelliquest-ai\\\\node_modules\\\\.bin\\\\\" | Where-Object { $_.Name -match \"tsc|vite\" } | Select-Object Name)",
+      "Bash(git push *)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
     ]
   }
 }
